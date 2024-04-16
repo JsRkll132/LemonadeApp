@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -83,16 +85,48 @@ fun LemonadeApp(){
         ) {
             when (currentStep) {
                 1 -> {
-
+                    LemonadeAppWithImgButton(
+                        textLabelResourceId = R.string.lemon_select,
+                        drawableResourceId = R.drawable.lemon_tree,
+                        contentDescription= "Tap the lemon tree to select a lemon",
+                        onImageClick = {
+                            currentStep = 2
+                            squeezeCount = (2..4).random()
+                        }
+                    )
                 }
                 2 -> {
-
+                    LemonadeAppWithImgButton(
+                        textLabelResourceId = R.string.lemon_squeeze,
+                        drawableResourceId = R.drawable.lemon_squeeze,
+                        contentDescription = "$squeezeCount .. keep tapping the lemon to squezze it",
+                        onImageClick = {
+                            squeezeCount--
+                            if (squeezeCount == 0) {
+                                currentStep = 3
+                            }
+                        }
+                    )
                 }
                 3 -> {
-
+                    LemonadeAppWithImgButton(
+                        textLabelResourceId = R.string.lemon_drink,
+                        drawableResourceId = R.drawable.lemon_drink,
+                        contentDescription= "Tap the lemonade to drink it",
+                        onImageClick = {
+                            currentStep = 4
+                        }
+                    )
                 }
                 4 -> {
-
+                    LemonadeAppWithImgButton(
+                        textLabelResourceId = R.string.lemon_empty_glass,
+                        drawableResourceId = R.drawable.lemon_restart,
+                        contentDescription = "Tap the empty glass to start again",
+                        onImageClick = {
+                            currentStep = 1
+                        }
+                    )
                 }
             }
         }
@@ -103,7 +137,7 @@ fun LemonadeApp(){
 fun LemonadeAppWithImgButton(
     textLabelResourceId :Int,
     drawableResourceId: Int,
-    contentDescriptionResourceId: Int,
+    contentDescription: String,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier
 
@@ -117,23 +151,29 @@ fun LemonadeAppWithImgButton(
             verticalArrangement =  Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = onImageClick,
+                shape = RoundedCornerShape(dimensionResource(id = R.dimen.button_corner_radius)
+                ),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
+            ) {
                 Image(painter =
                     painterResource(id =  drawableResourceId),
-                    contentDescription = stringResource(id = contentDescriptionResourceId),
+                    contentDescription = contentDescription,
                     modifier = Modifier
                         .width(dimensionResource(R.dimen.button_image_width))
                         .height(dimensionResource(R.dimen.button_image_height))
                         .padding(dimensionResource(R.dimen.button_interior_padding))
 
                 )
-                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_vertical)))
-                Text(
-                    text = stringResource(textLabelResourceId),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+
             }
-            
+            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_vertical)))
+            Text(
+                text = contentDescription,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 
